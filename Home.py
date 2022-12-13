@@ -17,7 +17,7 @@ with st.sidebar:
             min_value=0.1,
             max_value=10.0,
             value=1.0,
-            step=1.0,
+            step=0.5,
         )
         return_metric = st.radio(
             label='Return Metric (Y-axis)',
@@ -43,7 +43,7 @@ ticker2 = clean_text_input(ticker2)
 data = get_data(ticker1, ticker2)
 
 prepped_data = prep_data(data, holding_period, return_metric, ticker1, ticker2)
-fig = make_plotly(prepped_data, return_metric, ticker1, ticker2)
+fig = make_plotly(prepped_data, holding_period, return_metric, ticker1, ticker2)
 
 win_rate = (prepped_data[f'{ticker1}_return'] > prepped_data[f'{ticker2}_return']).mean()
 avg_ret1 = prepped_data[f'{ticker1}_return'].mean()

@@ -50,15 +50,23 @@ def prep_data(
     ticker2: str,
 ) -> pd.DataFrame:
     '''Prepare data with proper columns for plotting'''
-    holding_period_days = int(252 * holding_period)
+    lesser_data_ticker = data['Close'].isna().sum().idxmax()
+    lesser_data_startdate = data['Close'].dropna().index[0]
+    lesser_data_enddate = data['Close'].dropna().index[-1]
+    lesser_data_yeardelta = (lesser_data_enddate - lesser_data_startdate).days / 365
+    assert lesser_data_yeardelta > holding_period, (
+        f'Ticker "{lesser_data_ticker}" only has {lesser_data_yeardelta :.2f}'
+        ' years worth of data. Choose a smaller holding period.'
+    )
 
     df = pd.DataFrame(index = data.index)
     df['startdate'] = data.index
-    df['enddate'] = df['startdate'].shift(-holding_period_days)
+    unmatched_enddates = data.index + np.timedelta64(int(365 * holding_period), 'D')
+    df['enddate'] = df.index[df.index.get_indexer(unmatched_enddates, method='nearest')]
 
     for ticker in [ticker1, ticker2]:
         df[f'{ticker}_startprice'] = data['Close'][ticker]
-        df[f'{ticker}_endprice'] = df[f'{ticker}_startprice'].shift(-holding_period_days)
+        df[f'{ticker}_endprice'] = df.loc[df['enddate']][f'{ticker}_startprice'].to_numpy()
 
         ratio = df[f'{ticker}_endprice'] / df[f'{ticker}_startprice']
         if return_metric == "Cumulative Percent Returns":
@@ -70,12 +78,16 @@ def prep_data(
         else:  # return_metric == "Annualized Log Returns"
             df[f'{ticker}_return'] = np.log(ratio) / holding_period
 
-    return df.dropna()
+    last_valid_start = df[df['enddate'] == df.index[-1]].index[0]
+    df = df.loc[:last_valid_start].dropna()
+
+    return df
 
 
 def make_plotly(
         prepped_data: pd.DataFrame,
-        return_metric,
+        holding_period: float,
+        return_metric: str,
         ticker1: str,
         ticker2: str
 ) -> go.Figure:
@@ -101,7 +113,7 @@ def make_plotly(
         fig.update_yaxes(ticksuffix='%')
 
     fig.update_layout(
-        title=f'Forward Returns ({ticker1} vs. {ticker2})',
+        title=f'{holding_period :.1f} Year Forward Returns ({ticker1} vs. {ticker2})',
         xaxis_title="Start Date",
         yaxis_title=return_metric,
         hovermode="x unified",
