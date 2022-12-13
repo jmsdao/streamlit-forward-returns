@@ -6,8 +6,8 @@ channels:
 dependencies:
   - streamlit
   - pandas
-  - ca-certificates
-  - certifi
-  - openssl
+#  - ca-certificates
+#  - certifi
+#  - openssl
   - matplotlib
   - plotly
