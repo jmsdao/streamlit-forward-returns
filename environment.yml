@@ -1,8 +1,9 @@
 # Created with: conda env export --from-history > environment.yml
 name: streamlit
 channels:
-  - conda-forge
+  - plotly  # manually added
   - defaults
+  - conda-forge
 dependencies:
   - streamlit
   - pandas
@@ -11,3 +12,4 @@ dependencies:
 #  - openssl
   - matplotlib
   - plotly
+
