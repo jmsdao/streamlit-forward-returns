@@ -1,4 +1,3 @@
-import pickle
 import streamlit as st
 from utils import clean_text_input, get_data, prep_data, make_plotly
 

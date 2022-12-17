@@ -9,18 +9,18 @@ import plotly.graph_objects as go
 # --- Constants ---
 # ----------------------------------------------------------------------------
 PCT_HOVERTEMPLATE = '<br>'.join([
-    '$%{customdata[0]:.2f} -> $%{customdata[1]:.2f}',
-    '%{customdata[2]} -> %{customdata[3]}',
+    '$%{customdata[0]:.2f} → $%{customdata[1]:.2f}',
+    '%{customdata[2]} → %{customdata[3]}',
     '<b>Return: %{y:.2f}%</b>',
 ])
 LOG_HOVERTEMPLATE = '<br>'.join([
-    '$%{customdata[0]:.2f} -> $%{customdata[1]:.2f}',
-    '%{customdata[2]} -> %{customdata[3]}',
+    '$%{customdata[0]:.2f} → $%{customdata[1]:.2f}',
+    '%{customdata[2]} → %{customdata[3]}',
     '<b>Return: %{y:.4f}</b>',
 ])
 
 # ----------------------------------------------------------------------------
-# ---External Functions ---
+# --- External Functions ---
 # ----------------------------------------------------------------------------
 def clean_text_input(text_input: str) -> str:
     '''Remove whitespaces and capitalize text input'''

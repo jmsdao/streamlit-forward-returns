@@ -1,10 +1,19 @@
 ## Environment Setup
-Use `conda` to install the environment described by `environment.yml`
+Install the environment with:
+
 ```
-conda env create -f environment.yml
+pip install -r requirements.txt
 ```
+
+or
+
+```
+conda env create -f conda_env.yml
+```
+(The conda YAML is intentionally not called  `environment.yml` so Streamlit will use `requirements.txt` for deployment.)
+
 ## Run the app locally
-From the root of this repo, activate the `conda` environment then run:
+From the root of this repo, activate the your environment then run:
 ```
 streamlit run Home.py
 ```
