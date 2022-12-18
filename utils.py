@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -29,14 +30,18 @@ def clean_text_input(text_input: str) -> str:
     return cleaned
 
 
-@st.cache
+@st.cache(suppress_st_warning=True)
 def get_data(ticker1: str, ticker2: str) -> pd.DataFrame:
     '''Call yfinance API to get data, given some tickers'''
-    data = yf.Tickers(f'{ticker1} {ticker2}').download(
+    print(f'[{datetime.now().strftime("%Y-%m-%d, %H:%M:%S")}]: Input tickers: {ticker1}, {ticker2}')
+    data = yf.download(
+        f'{ticker1} {ticker2}',
         period='max',
         actions=False,
-        auto_adjust=True,
+        auto_adjust=False,
     )
+    if len(yf.shared._ERRORS) != 0:
+        st.error(f'yfinance error message: {yf.shared._ERRORS}\n\nOne of your input tickers is probably invalid.')
     assert len(yf.shared._ERRORS) == 0, f'yfinance error: {yf.shared._ERRORS}'
 
     return data
@@ -44,20 +49,25 @@ def get_data(ticker1: str, ticker2: str) -> pd.DataFrame:
 
 def prep_data(
     data: pd.DataFrame,
+    use_adj_close: bool,
     holding_period: float,
     return_metric: str,
     ticker1: str,
     ticker2: str,
 ) -> pd.DataFrame:
     '''Prepare data with proper columns for plotting'''
-    lesser_data_ticker = data['Close'].isna().sum().idxmax()
-    lesser_data_startdate = data['Close'].dropna().index[0]
-    lesser_data_enddate = data['Close'].dropna().index[-1]
+    pricing = 'Adj Close' if use_adj_close else 'Close'
+
+    lesser_data_ticker = data[pricing].isna().sum().idxmax()
+    lesser_data_startdate = data[pricing].dropna().index[0]
+    lesser_data_enddate = data[pricing].dropna().index[-1]
     lesser_data_yeardelta = (lesser_data_enddate - lesser_data_startdate).days / 365
-    assert lesser_data_yeardelta > holding_period, (
-        f'Ticker "{lesser_data_ticker}" only has {lesser_data_yeardelta :.2f}'
-        ' years worth of data. Choose a smaller holding period.'
-    )
+    if lesser_data_yeardelta < holding_period:
+        st.error((
+            f'Ticker "{lesser_data_ticker}" only has {lesser_data_yeardelta :.2f}'
+            ' years worth of data. Choose a smaller holding period.'
+        ))
+    assert lesser_data_yeardelta > holding_period
 
     df = pd.DataFrame(index = data.index)
     df['startdate'] = data.index
@@ -65,7 +75,7 @@ def prep_data(
     df['enddate'] = df.index[df.index.get_indexer(unmatched_enddates, method='nearest')]
 
     for ticker in [ticker1, ticker2]:
-        df[f'{ticker}_startprice'] = data['Close'][ticker]
+        df[f'{ticker}_startprice'] = data[pricing][ticker]
         df[f'{ticker}_endprice'] = df.loc[df['enddate']][f'{ticker}_startprice'].to_numpy()
 
         ratio = df[f'{ticker}_endprice'] / df[f'{ticker}_startprice']

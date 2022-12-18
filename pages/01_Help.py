@@ -11,6 +11,8 @@ st.sidebar.markdown("""
    <li><a class="contents-el" href="#what-is-cumulative-vs-annualized-returns">What is cumulative vs. annualized returns?</a></li>
    <li><a class="contents-el" href="#what-is-percent-vs-log-returns">What is percent vs. log returns?</a></li>
    <li><a class="contents-el" href="#formulas-for-the-4-return-metrics">Formulas for the 4 return metrics</a></li>
+   <li><a class="contents-el" href="#what-is-adjust-prices-for-dividends">What is "Adjust prices for dividends"?</a></li>
+   <li><a class="contents-el" href="#can-i-see-the-source-code">Can I see the source code?</a></li>
 </ul>
 """, unsafe_allow_html=True)
 
@@ -85,6 +87,19 @@ $p_{t+n}$ : price of an asset at time $t+n$ (end price)
 ##### $$Cumulative Log Return = \ln{(\frac{p_{t+n}}{p_{t}})}$$
 
 ##### $$Annualized Log Return = \frac{1}{n}\ln{(\frac{p_{t+n}}{p_{t}})}$$
+
+
+### What is "Adjust prices for dividends"?
+When this box is unchecked, this is equivalent to Yahoo Finance's "Close" column.  
+When checked, this is equivalent is "Adj Close".
+
+Explanation from Yahoo Finance:
+> \*Close price adjusted for splits.  
+> \*\*Adjusted close price adjusted for splits and dividend and/or capital gain distributions.
+
+
+### Can I see the source code?
+Sure, you can [find it here](https://github.com/jmsdao/streamlit-forward-returns/).
 
 
 """
