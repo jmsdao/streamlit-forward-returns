@@ -90,12 +90,23 @@ $p_{t+n}$ : price of an asset at time $t+n$ (end price)
 
 
 ### What is "Adjust prices for dividends"?
-When this box is unchecked, this is equivalent to Yahoo Finance's "Close" column.  
-When checked, this is equivalent is "Adj Close".
+When this box is unchecked, the app will use Yahoo Finance's "Close" column for price data.  
+When checked, the app will use "Adj Close".
 
 Explanation from Yahoo Finance:
 > \*Close price adjusted for splits.  
 > \*\*Adjusted close price adjusted for splits and dividend and/or capital gain distributions.
+
+Using "Adj Close" (checking the box) will plot the returns you'd get if all dividends were immediately reinvested into the same stock.
+
+**Example**  
+If a stock paid out a dividend of $2 per share between a particular past and present date, you would calculate the "Adj Close" price as follows:
+
+| Pricing Type                   | Price at Past Date | Price at Present Date | Percent Return | Explanation                                                                                                                                                                              |
+|--------------------------------|--------------------|-----------------------|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Close                          | $100               | $123                  | 23%            | Just the close price when inspected at the past and present dates                                                                                                                        |
+| Close with dividend added back | $100               | $125                  | 25%            | The $2 dividend is added back without normalizing prices                                                                                                                                 |
+| Adj Close                      | $98.40             | $123                  | 25%            | Prices are normalized such that the "Close" and "Adj Close" prices match on the present date, but the return of "Adj Close" matches with the return of "Close with divdended added back" |
 
 
 ### Can I see the source code?
